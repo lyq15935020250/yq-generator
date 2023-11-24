@@ -30,7 +30,7 @@ public class MainGenerator {
         StaticGenerator.copyFilesByRecursive(inputPath, outputPath);
 //        生成动态文件
         String inputDynamicFilePath = projectPath + File.separator + "src/main/resources/templates/MainTemplate.java.ftl";
-        String outputDynamicFilePath = projectPath + File.separator + "acm-template/src/com/yq/acm/MainTemplate.java";
+        String outputDynamicFilePath = outputPath + File.separator + "acm-template/src/com/yq/acm/MainTemplate.java";
         DynamicGenerator.doGenerator(inputDynamicFilePath, outputDynamicFilePath, model);
     }
 }

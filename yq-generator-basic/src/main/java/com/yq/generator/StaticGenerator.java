@@ -37,12 +37,19 @@ public class StaticGenerator {
             copyFileByRecursive(inputFile,outputFile);
         } catch (Exception e) {
             System.out.println("文件复制失败");
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
     }
 
-    public static void copyFileByRecursive(File inputFile,File outputFile) throws IOException {
+    /**
+     * 文件 A => 目录 B，则文件 A 放在目录 B 下
+     * 文件 A => 文件 B，则文件 A 覆盖文件 B
+     * 目录 A => 目录 B，则目录 A 放在目录 B 下
+     *
+     * 核心思路：先创建目录，然后遍历目录内的文件，依次复制
+     */
+    private static void copyFileByRecursive(File inputFile,File outputFile) throws IOException {
 //        区分目录还是文件
         if (inputFile.isDirectory()){
             System.out.println(inputFile.getName());
@@ -52,7 +59,7 @@ public class StaticGenerator {
                 destOutPutFile.mkdirs();
             }
 //            获取目录下的所有文件和子目录
-            File[] listFiles = destOutPutFile.listFiles();
+            File[] listFiles = inputFile.listFiles();
 //            无子文件，直接结束
             if (ArrayUtil.isEmpty(listFiles)){
                 return;
