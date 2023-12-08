@@ -6,8 +6,9 @@
   "author": "yq",
   "createTime": "2023-11-22",
   "fileConfig": {
-    "inputRootPath": "D:/yq-generator/yq-generator-demo-projects/acm-template-pro",
+    "inputRootPath": ".source/acm-template-pro",
     "outputRootPath": "generated",
+    "sourceRootPath": "D:/yq-generator/yq-generator-demo-projects/acm-template-pro",
     "type": "dir",
     "files": [
       {
