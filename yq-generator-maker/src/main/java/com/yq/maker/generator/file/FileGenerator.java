@@ -1,6 +1,5 @@
 package com.yq.maker.generator.file;
 
-import com.yq.maker.model.DataModel;
 import freemarker.template.TemplateException;
 
 import java.io.File;
@@ -12,13 +11,6 @@ import java.io.IOException;
  * @date 2023/11/13 22:21
  */
 public class FileGenerator {
-    public static void main(String[] args) throws TemplateException, IOException {
-        DataModel dataModel = new DataModel();
-        dataModel.setAuthor("lyq");
-        dataModel.setLoop(false);
-        dataModel.setOutputText("求和结果:");
-        doGenerator(dataModel);
-    }
 
     public static void doGenerator(Object model) throws TemplateException, IOException {
         String projectPath = System.getProperty("user.dir");

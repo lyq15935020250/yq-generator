@@ -1,6 +1,5 @@
 package com.yq.maker;
 
-
 import com.yq.maker.generator.main.MainGenerator;
 import freemarker.template.TemplateException;
 

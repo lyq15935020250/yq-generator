@@ -1,17 +1,6 @@
 package com.yq.maker.generator.main;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.resource.ClassPathResource;
-import cn.hutool.core.util.StrUtil;
-import com.yq.maker.generator.JarGenerator;
-import com.yq.maker.generator.ScriptGenerator;
-import com.yq.maker.generator.file.DynamicFileGenerator;
-import com.yq.maker.meta.Meta;
-import com.yq.maker.meta.MetaManager;
-import freemarker.template.TemplateException;
 
-import java.io.File;
-import java.io.IOException;
 
 /**
  * @author lyq

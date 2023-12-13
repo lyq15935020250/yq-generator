@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author lyq
@@ -40,6 +41,17 @@ public class MetaValidator {
             return;
         }
         for (Meta.ModelConfig.ModelInfo modelInfo : models) {
+            // 类型为group，不校验
+            String groupkey = modelInfo.getGroupKey();
+            if (StrUtil.isNotEmpty(groupkey)){
+                // 生成中间参数
+                List<Meta.ModelConfig.ModelInfo> subModelInfoList = modelInfo.getModels();
+                String allArgsStr = subModelInfoList.stream()
+                        .map(subModelInfo -> String.format("\"--%s\"", subModelInfo.getFieldName()))
+                        .collect(Collectors.joining(", "));
+                modelInfo.setAllArgsStr(allArgsStr);
+                continue;
+            }
             String fieldName = modelInfo.getFieldName();
             if (StrUtil.isBlank(fieldName)) {
                 throw new MetaException("未输入 fieldName");
@@ -89,6 +101,11 @@ public class MetaValidator {
             return;
         }
         for (Meta.FileConfig.FileInfo fileInfo : files) {
+            // 类型为group，不校验
+            String type = fileInfo.getType();
+            if (FileTypeEnum.GROUP.getValue().equals(type)) {
+                continue;
+            }
             // 必填
             String inputPath = fileInfo.getInputPath();
             if (StrUtil.isBlank(inputPath)) {
@@ -103,7 +120,7 @@ public class MetaValidator {
 
             // 默认：file（inputPath 有文件后缀），否则为dir
             String fileInfoType = fileInfo.getType();
-            if (StrUtil.isBlank(fileInfoType)){
+            if (StrUtil.isBlank(fileInfoType)) {
                 if (StrUtil.isBlank(FileUtil.getSuffix(inputPath))) {
                     fileInfo.setType(FileTypeEnum.DIR.getValue());
                 } else {

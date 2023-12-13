@@ -4,33 +4,79 @@ import cn.hutool.core.bean.BeanUtil;
 import ${basePackage}.generator.MainGenerator;
 import ${basePackage}.model.DataModel;
 import lombok.Data;
+import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Command;
 
 import java.util.concurrent.Callable;
 
-/**
-* @author lyq
-* @description: 生成文件
-* @date 2023/11/23 15:22
-*/
+<#--生成选项-->
+<#macro generateOption indent modelInfo>
+${indent}@Option(names = {<#if modelInfo.abbr??>"-${modelInfo.abbr}", </#if>"--${modelInfo.fieldName}"}, arity = "0..1", <#if modelInfo.description??>description = "${modelInfo.description}", </#if>interactive = true, echo = true)
+${indent}private ${modelInfo.type} ${modelInfo.fieldName}<#if modelInfo.defaultValue??> = ${modelInfo.defaultValue?c}</#if>;
+</#macro>
+
+<#--生成命令调用-->
+<#macro generateCommand indent modelInfo>
+${indent}System.out.println("输入${modelInfo.groupName}配置：");
+${indent}CommandLine commandLine = new CommandLine(${modelInfo.type}Command.class);
+${indent}commandLine.execute(${modelInfo.allArgsStr});
+</#macro>
+
 @Command(name = "generator", description = "生成代码", mixinStandardHelpOptions = true)
 @Data
-public class GeneratorCommand implements Callable
-<Integer> {
+public class GeneratorCommand implements Callable<Integer> {
 
     <#list modelConfig.models as modelInfo>
+    <#if modelInfo.groupKey??>
+    /**
+     * ${modelInfo.groupName}
+     */
+    static DataModel.${modelInfo.type} ${modelInfo.groupKey} = new DataModel.${modelInfo.type}();
 
-    @Option(names = {<#if modelInfo.abbr??>"-${modelInfo.abbr}", </#if>"--${modelInfo.fieldName}"}, arity = "0..1", <#if modelInfo.description??>description = "${modelInfo.description}", </#if>interactive = true, echo = true)
-    private ${modelInfo.type} ${modelInfo.fieldName}<#if modelInfo.defaultValue??> = ${modelInfo.defaultValue?c}</#if>;
+    <#--根据分组生成命令-->
+    @Command(name = "${modelInfo.groupKey}")
+    @Data
+    public static class ${modelInfo.type}Command implements Runnable {
+    <#list modelInfo.models as subModelInfo>
+        <@generateOption indent="        " modelInfo=subModelInfo />
     </#list>
 
+        @Override
+        public void run(){
+            <#list modelInfo.models as subModelInfo>
+            ${modelInfo.groupKey}.${subModelInfo.fieldName} = ${subModelInfo.fieldName};
+            </#list>
+        }
+    }
+    <#else>
+    <@generateOption indent="    " modelInfo=modelInfo />
+    </#if>
+    </#list>
+
+    <#--生成调用方法-->
     @Override
     public Integer call() throws Exception {
-    DataModel dataModel = new DataModel();
-    BeanUtil.copyProperties(this, dataModel);
-    System.out.println("配置信息：" + dataModel);
-    MainGenerator.doGenerator(dataModel);
-    return 0;
+        <#list modelConfig.models as modelInfo>
+        <#if modelInfo.groupKey??>
+        <#if modelInfo.condition??>
+        if(${modelInfo.condition}){
+            <@generateCommand indent="            " modelInfo=modelInfo />
+        }
+        <#else>
+        <@generateCommand indent="        " modelInfo=modelInfo />
+        </#if>
+        </#if>
+        </#list>
+        <#-- 填充数据模型对象 -->
+        DataModel dataModel = new DataModel();
+        BeanUtil.copyProperties(this, dataModel);
+        <#list modelConfig.models as modelInfo>
+        <#if modelInfo.groupKey??>
+        dataModel.${modelInfo.groupKey} = ${modelInfo.groupKey};
+        </#if>
+        </#list>
+        MainGenerator.doGenerator(dataModel);
+        return 0;
     }
-    }
+}
