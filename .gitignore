@@ -4,7 +4,7 @@
 .temp
 target
 yq-generator.iml
-application-loacl.yml
+application-local.yml
 generated
 
 ### Java template
