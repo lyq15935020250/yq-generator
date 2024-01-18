@@ -1,7 +1,7 @@
 # 对象存储
 cos:
   client:
-    accessKey: AKID
-    secretKey:
+    accessKey: lyqq
+    secretKey: qweqweeqwe
     region: ap-nanjing
     bucket: yq-1314226400
