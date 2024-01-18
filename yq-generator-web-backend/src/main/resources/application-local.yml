@@ -1,0 +1,7 @@
+# 对象存储
+cos:
+  client:
+    accessKey: AKIDdTdzLlJvSHFGMTWfvAIMMIIID5unlrDe
+    secretKey: LfHxhR7TuR1ocN229HSdkyETfrR7yggy
+    region: ap-nanjing
+    bucket: yq-1314226400
