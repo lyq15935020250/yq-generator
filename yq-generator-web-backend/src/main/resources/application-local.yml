@@ -1,7 +1,0 @@
-# 对象存储
-cos:
-  client:
-    accessKey: lyqq
-    secretKey: qweqweeqwe
-    region: ap-nanjing
-    bucket: yq-1314226400
