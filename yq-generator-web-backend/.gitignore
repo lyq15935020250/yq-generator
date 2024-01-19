@@ -2,6 +2,7 @@
 ### @from <a href="https://yupi.icu">编程导航知识星球</a> ###
 
 HELP.md
+application-local.yml
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
