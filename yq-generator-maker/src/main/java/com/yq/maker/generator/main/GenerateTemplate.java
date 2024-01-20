@@ -3,6 +3,7 @@ package com.yq.maker.generator.main;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.resource.ClassPathResource;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.util.ZipUtil;
 import com.yq.maker.generator.JarGenerator;
 import com.yq.maker.generator.ScriptGenerator;
 import com.yq.maker.generator.file.DynamicFileGenerator;
@@ -42,7 +43,7 @@ public abstract class GenerateTemplate {
         buildDist(outputPath, copySourcePath, jarPath, shellFilePath);
     }
 
-    protected void buildDist(String outputPath, String copySourcePath, String jarPath, String shellFilePath) {
+    protected String buildDist(String outputPath, String copySourcePath, String jarPath, String shellFilePath) {
         String distOutPath = outputPath + "-dist";
         // -拷贝jar包
         String distJarAbsolutePath = distOutPath + File.separator + "target";
@@ -54,6 +55,14 @@ public abstract class GenerateTemplate {
         FileUtil.copy(shellFilePath + ".bat", distOutPath, true);
         // -拷贝源模板文件
         FileUtil.copy(copySourcePath, distOutPath, true);
+
+        return distOutPath;
+    }
+
+    protected String buildZip(String outputPath){
+        String zipPath = outputPath + ".zip";
+        ZipUtil.zip(outputPath,zipPath);
+        return zipPath;
     }
 
     protected String buildScript(String outputPath, String jarPath) {

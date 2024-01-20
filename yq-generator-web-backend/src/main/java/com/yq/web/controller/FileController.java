@@ -57,7 +57,6 @@ public class FileController {
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<String> uploadFileTest(@RequestPart("file") MultipartFile multipartFile) {
         // 文件目录：根据业务、用户来划分
-        String uuid = RandomStringUtils.randomAlphanumeric(8);
         String filename = multipartFile.getOriginalFilename();
         String filepath = String.format("/test/%s", filename);
         File file = null;
@@ -67,7 +66,7 @@ public class FileController {
             multipartFile.transferTo(file);
             cosManager.putObject(filepath, file);
             // 返回可访问地址
-            return ResultUtils.success(FileConstant.COS_HOST + filepath);
+            return ResultUtils.success(filepath);
         } catch (Exception e) {
             log.error("file upload error, filepath = " + filepath, e);
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "上传失败");
@@ -144,7 +143,7 @@ public class FileController {
             multipartFile.transferTo(file);
             cosManager.putObject(filepath, file);
             // 返回可访问地址
-            return ResultUtils.success(FileConstant.COS_HOST + filepath);
+            return ResultUtils.success(filepath);
         } catch (Exception e) {
             log.error("file upload error, filepath = " + filepath, e);
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "上传失败");

@@ -1,7 +1,11 @@
 package com.yq.web.controller;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.qcloud.cos.model.COSObject;
+import com.qcloud.cos.model.COSObjectInputStream;
+import com.qcloud.cos.utils.IOUtils;
 import com.yq.web.annotation.AuthCheck;
 import com.yq.web.common.BaseResponse;
 import com.yq.web.common.DeleteRequest;
@@ -10,6 +14,7 @@ import com.yq.web.common.ResultUtils;
 import com.yq.web.constant.UserConstant;
 import com.yq.web.exception.BusinessException;
 import com.yq.web.exception.ThrowUtils;
+import com.yq.web.manager.CosManager;
 import com.yq.web.meta.Meta;
 import com.yq.web.model.dto.generator.GeneratorAddRequest;
 import com.yq.web.model.dto.generator.GeneratorEditRequest;
@@ -26,6 +31,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -44,6 +51,9 @@ public class GeneratorController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private CosManager cosManager;
 
     // region 增删改查
 
@@ -249,6 +259,49 @@ public class GeneratorController {
         }
         boolean result = generatorService.updateById(generator);
         return ResultUtils.success(result);
+    }
+
+    @GetMapping("/download")
+    public void downloadGeneratorById(long id, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if (id <= 0){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+
+        User loginUser = userService.getLoginUser(request);
+
+        Generator generator = generatorService.getById(id);
+        if (generator == null){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+
+        String filePath = generator.getDistPath();
+        if (StrUtil.isBlank(filePath)){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"产物包不存在");
+        }
+
+        // 追踪事件
+        log.info("用户：{} 下载了{}", loginUser,filePath);
+
+        COSObjectInputStream cosObjectInput = null;
+        try {
+            COSObject cosObject = cosManager.getObject(filePath);
+            cosObjectInput = cosObject.getObjectContent();
+            // 处理下载到的流
+            byte[] bytes = IOUtils.toByteArray(cosObjectInput);
+            // 设置响应头
+            response.setContentType("application/octet-stream;charset=UTF-8");
+            response.setHeader("Content-Disposition", "attachment; filename=" + filePath);
+            // 写入响应
+            response.getOutputStream().write(bytes);
+            response.getOutputStream().flush();
+        } catch (Exception e) {
+            log.error("file download error, filepath = " + filePath, e);
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "下载失败");
+        } finally {
+            if (cosObjectInput != null){
+                cosObjectInput.close();
+            }
+        }
     }
 
 }

@@ -7,10 +7,10 @@ package com.yq.maker.generator.main;
  * @description:
  * @date 2023/12/5 16:58
  */
-public class MainGenerator extends GenerateTemplate{
+public class ZipGenerator extends GenerateTemplate{
     @Override
     protected String buildDist(String outputPath, String copySourcePath, String jarPath, String shellFilePath) {
-        System.out.println("不生产dist文件");
-        return "";
+        String distPath = super.buildDist(outputPath, copySourcePath, jarPath, shellFilePath);
+        return super.buildZip(distPath);
     }
 }
