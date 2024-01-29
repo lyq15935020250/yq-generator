@@ -74,3 +74,12 @@ VALUES (4, 'yq用户中心', 'yq用户中心项目生成器', 'com.yq', '1.0', '
 INSERT INTO yq_generator.generator (id, name, description, basePackage, version, author, tags, picture, fileConfig,
                                     modelConfig, distPath, status, userId)
 VALUES (5, 'yq商城', 'yq商城项目生成器', 'com.yq', '1.0', '程序员yq', '["Java", "前端"]', 'yupi', '{}', '{}', null, 0, 1);
+
+INSERT INTO yq_generator.generator (id, name, description, basePackage, version, author, tags, picture, fileConfig,
+                                    modelConfig, distPath, status, userId, createTime, updateTime, isDelete)
+VALUES (18, 'acm-template-pro-generator', 'ACM 示例模板生成器', 'com.yq', '1.0', 'yq', '["Java"]',
+        'https://yuzi-1256524210.cos.ap-shanghai.myqcloud.com/generator_picture/1738875515482562562/U7uDBXC3-test (1).jpg',
+        '{ "files": [ { "groupKey": "git", "groupName": "开源", "type": "group", "condition": "needGit", "files": [ { "inputPath": ".gitignore", "outputPath": ".gitignore", "type": "file", "generateType": "static" }, { "inputPath": "README.md", "outputPath": "README.md", "type": "file", "generateType": "static" } ] }, { "inputPath": "src/com/yq/acm/MainTemplate.java.ftl", "outputPath": "src/com/yupi/acm/MainTemplate.java", "type": "file", "generateType": "dynamic" } ] }',
+        '{"models":[{"fieldName":"needGit","type":"boolean","description":"是否生成 .gitignore 文件","defaultValue":true},{"fieldName":"loop","type":"boolean","description":"是否生成循环","defaultValue":false,"abbr":"l"},{"type":"MainTemplate","description":"用于生成核心模板文件","groupKey":"mainTemplate","groupName":"核心模板","models":[{"fieldName":"author","type":"String","description":"作者注释","defaultValue":"yupi","abbr":"a"},{"fieldName":"outputText","type":"String","description":"输出信息","defaultValue":"sum = ","abbr":"o"}],"condition":"loop"}]}',
+        '/generator_dist/1738875515482562562/kLbG2yGh-acm-template-pro-generator.zip', 0, 1738875515482562562,
+        '2024-01-06 23:00:17', '2024-01-08 18:50:12', 0);

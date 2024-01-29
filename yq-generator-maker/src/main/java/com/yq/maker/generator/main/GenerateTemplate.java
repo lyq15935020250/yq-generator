@@ -101,6 +101,11 @@ public abstract class GenerateTemplate {
         outputFilePath = baseJavaPackagePath + "/cli/command/GeneratorCommand.java";
         DynamicFileGenerator.doGenerator(inputFilePath, outputFilePath, meta);
 
+        // cli.command.JsonGeneratorCommand
+        inputFilePath = resourcesPath + File.separator + "templates/java/cli/command/JsonGeneratorCommand.java.ftl";
+        outputFilePath = baseJavaPackagePath + "/cli/command/JsonGeneratorCommand.java";
+        DynamicFileGenerator.doGenerator(inputFilePath, outputFilePath, meta);
+
         // cli.command.ListCommand
         inputFilePath = resourcesPath + File.separator + "templates/java/cli/command/ListCommand.java.ftl";
         outputFilePath = baseJavaPackagePath + "/cli/command/ListCommand.java";

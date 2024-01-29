@@ -1,0 +1,8 @@
+{
+  "needGit": false,
+  "loop": true,
+  "mainTemplate": {
+    "author": "llyyqq",
+    "outputText": "hello world"
+  }
+}
