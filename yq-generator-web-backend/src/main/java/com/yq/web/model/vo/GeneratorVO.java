@@ -1,7 +1,7 @@
 package com.yq.web.model.vo;
 
 import cn.hutool.json.JSONUtil;
-import com.yq.web.meta.Meta;
+import com.yq.maker.meta.Meta;
 import com.yq.web.model.entity.Generator;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;

@@ -27,6 +27,17 @@ public abstract class GenerateTemplate {
         // 输出根路径
         String projectPath = System.getProperty("user.dir");
         String outputPath = projectPath + File.separator + "generated" + File.separator + meta.getName();
+        doGenerate(meta, outputPath);
+    }
+
+    /**
+     * @param meta
+     * @param outputPath
+     * @throws TemplateException
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public void doGenerate(Meta meta, String outputPath) throws TemplateException, IOException, InterruptedException {
         if (!FileUtil.exist(outputPath)) {
             FileUtil.mkdir(outputPath);
         }
@@ -59,9 +70,9 @@ public abstract class GenerateTemplate {
         return distOutPath;
     }
 
-    protected String buildZip(String outputPath){
+    protected String buildZip(String outputPath) {
         String zipPath = outputPath + ".zip";
-        ZipUtil.zip(outputPath,zipPath);
+        ZipUtil.zip(outputPath, zipPath);
         return zipPath;
     }
 
@@ -79,9 +90,8 @@ public abstract class GenerateTemplate {
     }
 
     protected void generateCode(Meta meta, String outputPath) throws IOException, TemplateException {
-        // 读取 rescources 目录
-        ClassPathResource classPathResource = new ClassPathResource("");
-        String resourcesPath = classPathResource.getAbsolutePath();
+
+        String resourcesPath = "";
 
         // Java 包基础路径
         String basePackage = meta.getBasePackage();

@@ -1,6 +1,6 @@
 package com.yq.web.model.dto.generator;
 
-import com.yq.web.meta.Meta;
+import com.yq.maker.meta.Meta;
 import lombok.Data;
 
 import java.io.Serializable;

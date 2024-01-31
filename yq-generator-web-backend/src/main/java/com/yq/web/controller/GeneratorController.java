@@ -8,6 +8,8 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Map;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.ZipUtil;
 import cn.hutool.json.JSONUtil;
@@ -15,6 +17,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qcloud.cos.model.COSObject;
 import com.qcloud.cos.model.COSObjectInputStream;
 import com.qcloud.cos.utils.IOUtils;
+import com.yq.maker.generator.main.GenerateTemplate;
+import com.yq.maker.generator.main.ZipGenerator;
+import com.yq.maker.meta.MetaValidator;
 import com.yq.web.annotation.AuthCheck;
 import com.yq.web.common.BaseResponse;
 import com.yq.web.common.DeleteRequest;
@@ -24,7 +29,7 @@ import com.yq.web.constant.UserConstant;
 import com.yq.web.exception.BusinessException;
 import com.yq.web.exception.ThrowUtils;
 import com.yq.web.manager.CosManager;
-import com.yq.web.meta.Meta;
+import com.yq.maker.meta.Meta;
 import com.yq.web.model.dto.generator.*;
 import com.yq.web.model.entity.Generator;
 import com.yq.web.model.entity.User;
@@ -328,6 +333,8 @@ public class GeneratorController {
 
         // 判断登录
         User loginUser = userService.getLoginUser(request);
+        log.info("用户 {} 使用了生成器 {}", loginUser.getId(), id);
+
         Generator generator = generatorService.getById(id);
         if (generator == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
@@ -416,12 +423,81 @@ public class GeneratorController {
         response.setHeader("Content-Disposition", "attachment; filename=" + resultZipFile.getName());
 
         // 写入响应
-        Files.copy(resultZipFile.toPath(),response.getOutputStream());
+        Files.copy(resultZipFile.toPath(), response.getOutputStream());
 
         // 清空工作空间
         // 异步清理无用文件
         CompletableFuture.runAsync(() -> {
             FileUtil.del(templateDirPath);
+        });
+    }
+
+    @PostMapping("/make")
+    public void makeGenerator(@RequestBody GeneratorMakeRequest generatorMakeRequest, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // 输入参数
+        Meta meta = generatorMakeRequest.getMeta();
+        String zipFilePath = generatorMakeRequest.getZipFilePath();
+        if (StrUtil.isBlank(zipFilePath)) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "压缩包不存在");
+        }
+
+        /// 判断登录
+        User loginUser = userService.getLoginUser(request);
+        log.info("用户 {} 使用了生成器 {}", loginUser.getId(), meta.getName());
+
+        // 工作空间
+        String projectPath = System.getProperty("user.dir");
+        String id = IdUtil.getSnowflakeNextId() + RandomUtil.randomString(6);
+        String tempDirPath = String.format("%s/.temp/make/%s", projectPath, id);
+        // 压缩包下载到本地的路径
+        String localZipFilePath = tempDirPath + "/project.zip";
+        if (!FileUtil.exist(localZipFilePath)) {
+            FileUtil.touch(localZipFilePath);
+        }
+
+        // 下载模板文件压缩包
+        try {
+            cosManager.download(zipFilePath, localZipFilePath);
+        } catch (InterruptedException e) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "生成器下载失败");
+        }
+
+        // 解压压缩包
+        File unzipDistDir = ZipUtil.unzip(localZipFilePath);
+
+        // 构造 meta 和输出路径
+        String sourceRootPath = unzipDistDir.getAbsolutePath();
+        meta.getFileConfig().setSourceRootPath(sourceRootPath);
+        // 校验和处理默认值
+        MetaValidator.doValidAndDefault(meta);
+        String outputPath = String.format("%s/generated/%s", tempDirPath, meta.getName());
+
+        // 调用maker制作工具
+        GenerateTemplate generateTemplate = new ZipGenerator();
+        try {
+            generateTemplate.doGenerate(meta,outputPath);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"制作失败");
+        }
+
+        // 返回值做好的代码生成器压缩
+        String suffix = "-dist.zip";
+        String zipFileName = meta.getName() + suffix;
+        String distZipFilePath = outputPath + suffix;
+
+        // 下载文件
+        // 设置响应头
+        response.setContentType("application/octet-stream;charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=" + zipFileName);
+
+        // 写入响应
+        Files.copy(Paths.get(distZipFilePath), response.getOutputStream());
+
+        // 清理工作空间
+        // 异步清理无用文件
+        CompletableFuture.runAsync(() -> {
+            FileUtil.del(tempDirPath);
         });
     }
 
