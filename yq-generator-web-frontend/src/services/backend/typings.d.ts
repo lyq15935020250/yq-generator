@@ -375,6 +375,11 @@ declare namespace API {
     userProfile?: string;
   };
 
+  type UserUpdatePasswordRequest = {
+    id?: string;
+    userPassword?: string;
+  };
+
   type UserUpdateRequest = {
     id?: string;
     userAvatar?: string;

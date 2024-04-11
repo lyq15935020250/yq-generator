@@ -1,5 +1,6 @@
 package com.yq.web.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yq.web.annotation.AuthCheck;
 import com.yq.web.common.BaseResponse;
@@ -171,6 +172,42 @@ public class UserController {
         }
         User user = new User();
         BeanUtils.copyProperties(userUpdateRequest, user);
+        boolean result = userService.updateById(user);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(true);
+    }
+
+    /**
+     * 修改用户密码
+     *
+     * @param userUpdatePasswordRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/update/password")
+    public BaseResponse<Boolean> updateUserPassword(@RequestBody UserUpdatePasswordRequest userUpdatePasswordRequest,
+                                                    HttpServletRequest request) {
+        if (userUpdatePasswordRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        Long id = userUpdatePasswordRequest.getId();
+        if (!id.equals(loginUser.getId())){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"不能修改其他用户密码");
+        }
+        String userPassword = userUpdatePasswordRequest.getUserPassword();
+        String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
+        LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        userLambdaQueryWrapper
+                .eq(User::getId,id)
+                .eq(User::getUserPassword,encryptPassword);
+        User one = userService.getOne(userLambdaQueryWrapper);
+        if (one != null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"新密码与旧密码相同");
+        }
+        User user = new User();
+        BeanUtils.copyProperties(loginUser,user);
+        user.setUserPassword(encryptPassword);
         boolean result = userService.updateById(user);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);

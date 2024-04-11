@@ -7,7 +7,7 @@ interface Props {
 }
 
 /**
- * 文件配置
+ *
  * @constructor
  */
 const FileConfig: React.FC<Props> = (props) => {

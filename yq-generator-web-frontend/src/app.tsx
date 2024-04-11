@@ -44,7 +44,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     logo,
     avatarProps: {
       render: () => {
-        return <AvatarDropdown />;
+        return <AvatarDropdown  menu={true}/>;
       },
     },
     waterMarkProps: {

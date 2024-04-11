@@ -11,10 +11,10 @@ interface Props {
 }
 
 /**
- * 文件上传组件
+ * 用户头像上传组件
  * @constructor
  */
-const PictureUploader: React.FC<Props> = (props) => {
+const UserAvatarUploader: React.FC<Props> = (props) => {
   const { biz, value, onChange } = props;
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -40,18 +40,6 @@ const PictureUploader: React.FC<Props> = (props) => {
     },
   };
 
-  const beforeUpload = (file: any) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-      message.error('文件格式不正确，建议使用 jpg 或 png 格式');
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      message.error('文件大小超过 2MB');
-    }
-    return isJpgOrPng && isLt2M;
-  };
-
   const uploadButton = (
     <div>
       {loading ? <LoadingOutlined /> : <PlusOutlined />}
@@ -60,10 +48,10 @@ const PictureUploader: React.FC<Props> = (props) => {
   );
 
   return (
-    <Upload {...uploadProps} beforeUpload={beforeUpload} showUploadList={false}>
+    <Upload {...uploadProps}>
       {value ? <img src={value} alt={'picture'} style={{ width: '100%' }} /> : uploadButton}
     </Upload>
   );
 };
 
-export default PictureUploader;
+export default UserAvatarUploader;

@@ -9,6 +9,20 @@ export default [
   },
   { path: '/', icon: 'home', component: './Index', name: '主页' },
   {
+    name: '个人中心',
+    icon: 'smile',
+    path: '/account/center',
+    component: './Account/Center',
+    hideInMenu: true
+  },
+  {
+    name: '个人设置',
+    icon: 'smile',
+    path: '/account/settings',
+    component: './Account/Settings',
+    hideInMenu: true
+  },
+  {
     path: '/generator/add',
     icon: 'plus',
     component: './Generator/Add',

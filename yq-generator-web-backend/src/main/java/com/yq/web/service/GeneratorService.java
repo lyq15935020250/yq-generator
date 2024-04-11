@@ -8,6 +8,7 @@ import com.yq.web.model.entity.Generator;
 import com.yq.web.model.vo.GeneratorVO;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 帖子服务
@@ -35,7 +36,7 @@ public interface GeneratorService extends IService<Generator> {
 
 
     /**
-     * 获取帖子封装
+     * 获取生成器封装
      *
      * @param generator
      * @param request
@@ -44,11 +45,13 @@ public interface GeneratorService extends IService<Generator> {
     GeneratorVO getGeneratorVO(Generator generator, HttpServletRequest request);
 
     /**
-     * 分页获取帖子封装
+     * 分页获取生成器封装
      *
      * @param generatorPage
      * @param request
      * @return
      */
     Page<GeneratorVO> getGeneratorVOPage(Page<Generator> generatorPage, HttpServletRequest request);
+
+
 }

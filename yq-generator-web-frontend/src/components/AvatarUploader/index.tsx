@@ -14,7 +14,7 @@ interface Props {
  * 文件上传组件
  * @constructor
  */
-const PictureUploader: React.FC<Props> = (props) => {
+const AvatarUploader: React.FC<Props> = (props) => {
   const { biz, value, onChange } = props;
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -53,17 +53,26 @@ const PictureUploader: React.FC<Props> = (props) => {
   };
 
   const uploadButton = (
-    <div>
+    <button style={{ border: 0, background: 'none' }} type="button">
       {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>上传</div>
-    </div>
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </button>
   );
 
   return (
-    <Upload {...uploadProps} beforeUpload={beforeUpload} showUploadList={false}>
-      {value ? <img src={value} alt={'picture'} style={{ width: '100%' }} /> : uploadButton}
+    <Upload
+      {...uploadProps}
+      listType="picture-circle"
+      beforeUpload={beforeUpload}
+      showUploadList={false}
+    >
+      {value ? (
+        <img src={value} alt={'picture'} style={{ width: '100%', borderRadius: '50%' }} />
+      ) : (
+        uploadButton
+      )}
     </Upload>
   );
 };
 
-export default PictureUploader;
+export default AvatarUploader;

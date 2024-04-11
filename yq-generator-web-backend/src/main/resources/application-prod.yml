@@ -8,24 +8,57 @@ spring:
   # todo 需替换配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/my_db
-    username: root
-    password: 123456
+    url: jdbc:mysql://106.54.17.227:3306/yq_generator
+    username: yq_generator
+    password: 123123
   # Redis 配置
   # todo 需替换配置
   redis:
     database: 1
-    host: localhost
+    host: 106.54.17.227
     port: 6379
     timeout: 5000
-    password: 123456
+    password: 123123
 mybatis-plus:
   configuration:
-    # 生产环境关闭日志
-    log-impl: ''
+    map-underscore-to-camel-case: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: isDelete # 全局逻辑删除的实体字段名
+      logic-delete-value: 1 # 逻辑已删除值（默认为 1）
+      logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
+# 对象存储
+cos:
+  client:
+    accessKey: 自己的COS对象存储AK
+    secretKey: 自己的COS对象存储SK
+    region: ap-nanjing
+    bucket: 自己的桶名
 # 接口文档配置
 knife4j:
   basic:
     enable: true
     username: root
     password: 123456
+
+# xxl-job 配置
+xxl:
+  job:
+    admin:
+      # xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
+      addresses: http://106.54.17.227:8080/xxl-job-admin
+    # xxl-job, access token
+    accessToken: default_token
+    executor:
+      # xxl-job executor appname
+      appname: yq-generator-web-backend
+      # xxl-job executor registry-address: default use address to registry , otherwise use ip:port if address is null
+      address:
+      # xxl-job executor server-info
+      ip:
+      port: 9999
+      # xxl-job executor log-path
+      logpath: logs/jobhandler
+      # xxl-job executor log-retention-days
+      logretentiondays: 30

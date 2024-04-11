@@ -1,12 +1,13 @@
 import CreateModal from '@/pages/Admin/Generator/components/CreateModal';
 import UpdateModal from '@/pages/Admin/Generator/components/UpdateModal';
-import {deleteGeneratorUsingPost, listGeneratorByPageUsingPost} from '@/services/backend/generatorController';
+import {deleteGeneratorUsingPost, listGeneratorByPageUsingPost,} from '@/services/backend/generatorController';
 import {PlusOutlined} from '@ant-design/icons';
 import type {ActionType, ProColumns} from '@ant-design/pro-components';
 import {ProTable} from '@ant-design/pro-components';
 import '@umijs/max';
-import {Button, message, Select, Space, Tag, Typography} from 'antd';
+import {Button, message, Popover, Select, Space, Tag, Typography} from 'antd';
 import React, {useRef, useState} from 'react';
+import ReactJson from 'react-json-view';
 
 /**
  * 生成器管理页面
@@ -114,18 +115,62 @@ const GeneratorAdminPage: React.FC = () => {
       dataIndex: 'fileConfig',
       valueType: 'jsonCode',
       hideInSearch: true,
+      render(_, record) {
+        if (record.fileConfig) {
+          return (
+            <Popover
+              trigger={'hover'}
+              // @ts-ignore
+              content={<ReactJson src={JSON.parse(record.fileConfig)} collapsed />}
+            >
+              <Button slot={'reference'} type={'text'}>
+                查看
+              </Button>
+            </Popover>
+          );
+        }
+      },
     },
     {
       title: '模型配置',
       dataIndex: 'modelConfig',
       valueType: 'jsonCode',
       hideInSearch: true,
+      render(_, record) {
+        if (record.modelConfig) {
+          return (
+            <Popover
+              trigger={'hover'}
+              // @ts-ignore
+              content={<ReactJson src={JSON.parse(record.modelConfig)} collapsed />}
+            >
+              <Button slot={'reference'} type={'text'}>
+                查看
+              </Button>
+            </Popover>
+          );
+        }
+      },
     },
     {
       title: '产物路径',
       dataIndex: 'distPath',
       valueType: 'text',
       hideInSearch: true,
+      render(_, record) {
+        if (record.distPath) {
+          return (
+            <Popover
+              trigger={'hover'} // @ts-ignore
+              content={<div>{record.distPath}</div>}
+            >
+              <Button slot={'reference'} type={'text'}>
+                查看
+              </Button>
+            </Popover>
+          );
+        }
+      },
     },
     {
       title: '状态',

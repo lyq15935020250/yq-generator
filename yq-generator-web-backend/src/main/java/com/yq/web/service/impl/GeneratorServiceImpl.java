@@ -1,6 +1,7 @@
 package com.yq.web.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -38,6 +39,9 @@ public class GeneratorServiceImpl extends ServiceImpl<GeneratorMapper, Generator
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private GeneratorMapper generatorMapper;
 
     @Override
     public void validGenerator(Generator generator, boolean add) {
@@ -128,6 +132,13 @@ public class GeneratorServiceImpl extends ServiceImpl<GeneratorMapper, Generator
         return generatorVO;
     }
 
+    /**
+     * 获取帖子 VO 列表
+     *
+     * @param generatorPage
+     * @param request
+     * @return
+     */
     @Override
     public Page<GeneratorVO> getGeneratorVOPage(Page<Generator> generatorPage, HttpServletRequest request) {
         List<Generator> generatorList = generatorPage.getRecords();
@@ -153,6 +164,7 @@ public class GeneratorServiceImpl extends ServiceImpl<GeneratorMapper, Generator
         generatorVOPage.setRecords(generatorVOList);
         return generatorVOPage;
     }
+
 
 }
 

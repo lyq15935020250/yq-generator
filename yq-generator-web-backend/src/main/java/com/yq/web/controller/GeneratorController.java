@@ -441,8 +441,13 @@ public class GeneratorController {
 
         // 构造命令
         File scriptDir = scriptFile.getParentFile();
+        // windows系统使用命令
         String scriptAbsolutePath = scriptFile.getAbsolutePath().replace("\\", "/");
         String[] commands = new String[]{scriptAbsolutePath, "json-generator", "--file=" + dataModelFilePath};
+
+        // 其他系统使用
+//        String scriptAbsolutePath = scriptFile.getAbsolutePath();
+//        String[] commands = new String[]{scriptAbsolutePath, "json-generator", "--file=" + dataModelFilePath};
 
         // 执行命令
         try {
